@@ -21,7 +21,7 @@ public class UserServiceIMPL implements UserService {
 	@Override
 	public String registerUser(User user) {
 
-		User user1 = repo.findByUserName(user.getUserName());
+		User user1 = repo.findByUserName(user.getUsername());
 
 		if (user1 != null) {
 			return "user Already exist";

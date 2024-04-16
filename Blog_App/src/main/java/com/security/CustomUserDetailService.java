@@ -12,41 +12,27 @@ import org.springframework.stereotype.Service;
 import com.Entity.User;
 import com.repository.UserRepo;
 
-
 @Service
 public class CustomUserDetailService implements UserDetailsService {
-	
+
 	@Autowired
-    private UserRepo userRepository;
+	private UserRepo userRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		 User user = userRepository.findByUserName(username);
-		 
-		 if(user==null) {
-			 throw new UsernameNotFoundException("usernot found exception");
-		 }
-		   
-		  
-		 UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-			        .username(user.getUserName())
-			        .password(user.getPassword())
-			        .authorities(Collections.singleton(new SimpleGrantedAuthority(user.getRole())))
-			        .build();
 
-			return userDetails;
+		User user = userRepository.findByUserName(username);
 
-	        // Map the fetched user details to a UserDetails object
-//	        UserDetails userDetails = User.builder()
-//	                .username(user.getUserName())
-//	                .password(user.getPassword())
-//	                .authorities(Collections.singleton(new SimpleGrantedAuthority(user.getRole())))
-//	                .build();
+		if (user == null) {
+			throw new UsernameNotFoundException("usernot found exception");
+		}
+  return user;
+//		User user = org.springframework.security.core.userdetails.User.builder()
+//				.username(user.getUserName()).password(user.getPassword())
+//				.authorities(Collections.singletonList(new SimpleGrantedAuthority(user.getRole()))).build();
 //
-//	        return userDetails;
-	    
-		
+//		return userDetails;
+
 	}
 
 }
