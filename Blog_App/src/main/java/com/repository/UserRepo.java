@@ -9,6 +9,6 @@ import com.Entity.User;
 public interface UserRepo extends JpaRepository<User, Integer> {
 	
 	
-	User findByUsername(String username);
+	User findByUserName(String username);
 
 }

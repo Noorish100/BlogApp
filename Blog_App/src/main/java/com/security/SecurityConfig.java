@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -27,15 +28,14 @@ import org.springframework.security.web.SecurityFilterChain;
 			return http.build();
 		}
 
-		@Bean
-		public InMemoryUserDetailsManager userDetails() {
+
 		
-	    	InMemoryUserDetailsManager userDetailsService = new InMemoryUserDetailsManager();
-		    UserDetails admin = User.withUsername("admin").password(passwordEncoder().encode("12345")).roles("ADMIN").build();
-		    UserDetails user = User.withUsername("user").password(passwordEncoder().encode("12345")).roles("USER").build();
-//		    userDetailsService.createUser(admin);
-//		    userDetailsService.createUser(user);
-		    return new InMemoryUserDetailsManager(admin,user);
+		@Bean
+		public UserDetailsService userDetail() {
+		
+			  return new CustomUserDetailService();
+	    	
+		  
 		}
 		
 	     @Bean
