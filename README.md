@@ -1,8 +1,6 @@
 <body>
    
  <p>This is the README file for the Alphaware Blog Application assignment.</p>
-
-   <h2>Assignment Details</h2>
     <h2>Assignment Description</h2>
     <p>The assignment is to develop a Blog Application for the Java Developer Role User Module. Below are the required functionalities:</p>
     <ul>
