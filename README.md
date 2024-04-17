@@ -1,5 +1,6 @@
 <body>
-   
+   <h3>SWAGGER --->>http://localhost:8023/swagger-ui/index.html</h3>
+   <h4>username=sab password =noor one of the user registered in  database </h4>
  <p>This is the README file for the Alphaware Blog Application assignment.</p>
     <h2>Assignment Description</h2>
     <p>The assignment is to develop a Blog Application for the Java Developer Role User Module. Below are the required functionalities:</p>
