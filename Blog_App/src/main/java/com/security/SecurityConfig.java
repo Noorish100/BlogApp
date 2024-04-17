@@ -24,21 +24,18 @@ import org.springframework.security.web.SecurityFilterChain;
 	
 	@Configuration
 	@EnableWebSecurity
-	@EnableGlobalMethodSecurity(prePostEnabled = true)
+	@EnableMethodSecurity
 	public class SecurityConfig {
 
 	    @Autowired
 	    private CustomUserDetailService customUserDetailService;
 
-//	    @Bean
-//	    public PasswordEncoder passwordEncoder() {
-//	        // No need to define the PasswordEncoder bean here, as it's already defined in PasswordEncoderConfig
-//	        return new BCryptPasswordEncoder();
-//	    }
+	   @Autowired
+	   private PasswordConfig config;
 
 	    @Autowired
 	    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-	        auth.userDetailsService(customUserDetailService);
+	        auth.userDetailsService(customUserDetailService).passwordEncoder(config.passwordEncoder());
 	    }
 
 	    @Bean

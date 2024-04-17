@@ -1,5 +1,6 @@
 package com.controller;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.Entity.User;
 import com.security.CustomUserDetailService;
+import com.security.PasswordConfig;
 import com.service.UserServiceIMPL;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,37 +41,63 @@ public class UserController {
 	@Autowired
 	private CustomUserDetailService userDetailService;
 
-//	@Autowired
-//	private PasswordEncoder customPasswordEncoder;
+	@Autowired
+	private PasswordConfig customPasswordEncoder;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-	@PostMapping("/register")
-	public ResponseEntity<String> registerUser(@RequestBody User user) {
-		String s = userService.registerUser(user);
-		return ResponseEntity.ok(s);
-	}
+	 @PostMapping("/register")
+	    public ResponseEntity<String> registerUser(@RequestBody User user) {
+	        // Encode the password before saving to the database
+//	        String encodedPassword = customPasswordEncoder.passwordEncoder()
+//	        		.encode(user.getPassword());
+//	        user.setPassword(encodedPassword);
+	        
+	        String response = userService.registerUser(user);
+	        return ResponseEntity.ok(response);
+	    }
+	 
+	 
+	 @GetMapping("/login")
+	 public ResponseEntity<String> login(HttpServletRequest request) {
+	     String authorizationHeader = request.getHeader("Authorization");
 
-	@PostMapping("/login")
-	public ResponseEntity<String> login(HttpServletRequest request) {
-		String username = request.getHeader("Authorization");
-		String password = request.getParameter("password"); // Extract password from the request if needed
+	     try {
+	         if (authorizationHeader != null && authorizationHeader.startsWith("Basic")) {
+	             // Extract the base64 encoded credentials part from the Authorization header
+	             String base64Credentials = authorizationHeader.substring("Basic".length()).trim();
 
-		try {
-			// Load user details from the database
-			UserDetails userDetails = userDetailService.loadUserByUsername(username);
+	             // Decode the base64 encoded credentials to get the actual username and password
+	             byte[] decodedBytes = Base64.getDecoder().decode(base64Credentials);
+	             String credentials = new String(decodedBytes);
 
-			// Check if the provided password matches the stored password
-			System.out.println("Password "+password);
-			System.out.println("userdetailPassword "+userDetails.getPassword());
-			
-			if (userDetails != null && userDetails.getPassword().equals(password)) {
-				return ResponseEntity.ok("Login successful");
-			} else {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-			}
-		} catch (UsernameNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username not found");
-		}
-	}
+	             // Split the credentials into username and password
+	             String[] usernameAndPassword = credentials.split(":", 2);
+	             String username = usernameAndPassword[0];
+	             String password = usernameAndPassword[1];
+
+	             System.out.println("login method started=================");
+	             System.out.println("username " + username);
+
+	             // Load user details from the database
+	             UserDetails userDetails = userDetailService.loadUserByUsername(username);
+
+	             // Check if the provided password matches the stored password
+	             if (userDetails != null && passwordEncoder.matches(password, userDetails.getPassword())) {
+	                 return ResponseEntity.ok("Login successful");
+	             } else {
+	                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+	             }
+	         }
+	     } catch (UsernameNotFoundException e) {
+	         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Username not found");
+	     }
+
+	     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed");
+	 }
+
+
 
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/AllUsers")
